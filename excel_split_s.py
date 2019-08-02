@@ -76,6 +76,7 @@ def excel_save(root_path: str, title_rows: list, data_rows: list):
         print('---->生成表格开始:',person[0])
         wb = xlwt.Workbook()
         sheet: Worksheet = wb.add_sheet('月度汇总', cell_overwrite_ok=True)
+        print('-------->加入标题开始')
         # 加入标题
         for i, row in enumerate(title_rows):
             for j, item in enumerate(row):
@@ -91,28 +92,27 @@ def excel_save(root_path: str, title_rows: list, data_rows: list):
                     sheet.write_merge(i, i, 0, len(row) - 1, item, set_style(alignment=False))
                 elif i > 2:
                     sheet.write(i, j, item, set_style())
+        print('-------->加入标题完成')
         # 加入数据
+        print('-------->加入数据开始')
         for j, it in enumerate(person):
             sheet.write(title_num, j, it, set_style())
+        print('-------->加入数据完成')
+        print('---->生成表格完成')
         print(file_path)
         with open(file_path,'wb')as file:
+            print('---->写入表格开始')
             wb.save(file)
+        print('---->写入表格完成')
 
 
 if __name__ == '__main__':
     for name in os.listdir('./'):
         if not ('.xlsx' in name or 'xls' in name):
             continue
-        path_dir = name.split('.xls')[0]
         if not os.path.exists('out'):
             os.mkdir('out')
-        file_path = os.path.join('./out', path_dir)
-        if os.path.exists(file_path):
-            print(name, '已存在,跳过解析')
-            continue
-        else:
-            os.mkdir(file_path)
-        print('解析文件:', name)
+        file_path = os.path.join('./out')
         try:
             context = excel_read(name)
             print('解析完毕,正在生成文件...')
@@ -121,6 +121,8 @@ if __name__ == '__main__':
         except Exception as e:
             print('解析过程产生异常:', e)
             input()
+        break
 
-    print('\n\n文件处理完毕,请查收')
+
+    print('\n\n文件解析完毕,请查收')
     input()
